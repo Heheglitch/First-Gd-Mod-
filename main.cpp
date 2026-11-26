@@ -5,12 +5,8 @@ using namespace geode::prelude;
 
 class $modify(MyMenuLayer, MenuLayer) {
     bool init() {
-        // Always call the original function first
         if (!MenuLayer::init()) return false;
 
-        log::info("Button Spawning loaded on the main menu!");
-
-        // Create a button using a built-in GD sprite
         auto button = CCMenuItemSpriteExtra::create(
             CCSprite::createWithSpriteFrameName("GJ_likeBtn_001.png"),
             this,
@@ -18,11 +14,15 @@ class $modify(MyMenuLayer, MenuLayer) {
         );
         button->setID("spawned-button"_spr);
 
-        // Add it to the existing bottom menu and re-layout
-        if (auto menu = this->getChildByID("bottom-menu")) {
-            menu->addChild(button);
-            menu->updateLayout();
-        }
+        // Our own menu in the top-right corner
+        auto winSize = CCDirector::get()->getWinSize();
+        button->setPosition({winSize.width - 40.f, winSize.height - 40.f});
+
+        auto menu = CCMenu::create();
+        menu->setID("spawned-menu"_spr);
+        menu->setPosition({0.f, 0.f});
+        menu->addChild(button);
+        this->addChild(menu);
 
         return true;
     }
